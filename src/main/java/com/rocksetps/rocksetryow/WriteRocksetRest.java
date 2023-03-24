@@ -12,12 +12,12 @@ import java.util.*;
 public class WriteRocksetRest implements Runnable {
     private Properties m_props;
     private HttpClient client;
-    private static Random rand;
+    private static Random random;
 
     public WriteRocksetRest(Properties _m_props, HttpClient _client) {
         m_props = _m_props;
         client = _client;
-        rand = new Random();
+        random = new Random();
     }
 
     public void run() {
@@ -74,8 +74,8 @@ public class WriteRocksetRest implements Runnable {
             int maxJitter = 40;
             while (passed == "false") {
                 ++count;
-                int maxJitter = Integer.parseInt(m_props.getProperty("max_jitter"));
-                Thread.sleep(100 * count + rand.nextInt(maxJitter));
+                maxJitter = Integer.parseInt(m_props.getProperty("max_jitter"));
+                Thread.sleep(100 * count + random.nextInt(maxJitter));
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(m_props.getProperty("API_SERVER") +
                                 "/v1/orgs/self/ws/" +
@@ -96,7 +96,7 @@ public class WriteRocksetRest implements Runnable {
                 } else {
                     if (response.statusCode() == 429) {
                         int retryInterval = (int) Math.pow(2, (count + 5) * 2);
-                        Thread.sleep(retryInterval + rand.nextInt(maxJitter));
+                        Thread.sleep(retryInterval + random.nextInt(maxJitter));
                     }
                     ;
                     System.out.println("fences error code: " + response.statusCode() + " count: " + count + " fence: " + offset);
@@ -127,7 +127,7 @@ public class WriteRocksetRest implements Runnable {
         String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder chars = new StringBuilder();
         while (chars.length() < body_length) { // length of the random string.
-            int index = (int) (rand.nextFloat() * CHARS.length());
+            int index = (int) (random.nextFloat() * CHARS.length());
             chars.append(CHARS.charAt(index));
         }
         String charString = chars.toString();
